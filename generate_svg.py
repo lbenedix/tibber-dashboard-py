@@ -55,7 +55,7 @@ def fetch_tibber_data(access_token):
     }
 
 
-def render_svg(data, price_level, width=300, height=300, scale=1, theme="light"):
+def render_svg(data, price_level, current_price, width=300, height=300, scale=1, theme="light"):
     templateLoader = jinja2.FileSystemLoader(searchpath="./")
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template('template.svg.jinja2')
@@ -73,6 +73,7 @@ def render_svg(data, price_level, width=300, height=300, scale=1, theme="light")
     svg_content = template.render(
         theme=theme,
         points=points,
+        current_price=int(round(current_price,2) * 100),
         price_labels=price_labels,
         currentX=current_x,
         price_level=price_level,
@@ -94,7 +95,7 @@ if __name__ == "__main__":
 
     d = fetch_tibber_data(args.access_token or os.getenv("TIBBER_TOKEN"))
 
-    svg = render_svg(d['prices'], d['currentLevel'], theme=args.theme)
+    svg = render_svg(d['prices'], d['currentLevel'], d['currentPrice'], theme=args.theme)
 
     clean_svg = etree.XML(svg, parser=etree.XMLParser(remove_blank_text=True))
 
