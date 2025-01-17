@@ -1,7 +1,7 @@
 import math
 import os
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from lxml import etree
 import jinja2
 import requests
@@ -67,7 +67,7 @@ def render_svg(data, price_level, width=300, height=300, scale=1, theme="light")
     max_y = max(p['y'] * scale for p in data)
     points = " ".join(f"{(i * width) / (len(data) - 1)},{height - ((p['y'] * scale) / max_y) * height}" for i, p in enumerate(data))
 
-    now = datetime.now()
+    now = datetime.now(tz=timezone(timedelta(hours=1)))  # Berlin is UTC+1
     current_x = (now.hour - 1 + now.minute / 60) * 12.5 + 135
 
     svg_content = template.render(
@@ -98,5 +98,7 @@ if __name__ == "__main__":
 
     clean_svg = etree.XML(svg, parser=etree.XMLParser(remove_blank_text=True))
 
-    with open('output.svg', 'w') as f:
-        f.write(etree.tostring(clean_svg, pretty_print=True).decode())
+    # with open('output.svg', 'w') as f:
+    #     f.write(etree.tostring(clean_svg, pretty_print=True).decode())
+
+    print(etree.tostring(clean_svg).decode())
