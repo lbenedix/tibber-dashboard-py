@@ -1,0 +1,41 @@
+meta {
+  name: Test
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: https://api.tibber.com/v1-beta/gql
+  body: graphql
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:graphql {
+  {
+    viewer {
+      homes {
+        currentSubscription {
+          priceInfo {
+            current {
+              total
+              level
+            }
+            today {
+              total
+              startsAt
+            }
+            tomorrow{
+              total
+              startsAt
+            }
+          }
+        }
+      }
+    }
+  }
+  
+}

@@ -1,0 +1,86 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+
+
+    {% if theme == "light" %}
+        <rect x="0" y="0" width="500" height="500" fill="#ffffff"/>
+    {% else %}
+        <rect x="0" y="0" width="500" height="500" fill="#1c1c1c"/>
+    {% endif %}
+
+    <g id="icon">
+        <image x="82" y="69" width="56" height="56" href="icons/{{ price_level }}.svg"/>
+    </g>
+
+    <g id="price"
+       font-family="Arial"
+       font-size="40"
+            {% if theme == "light" %}
+       fill="black"
+            {% else %}
+       fill="white"
+            {% endif %}
+    >
+        <text x="150" y="110" font-weight="bold">48</text>
+        <text x="200" y="110" font-weight="lighter" fill="grey">Cent</text>
+    </g>
+
+    <g id="price_axis" fill="grey" font-family="Arial" font-size="12px">
+        <text x="81" y="169">{{ price_labels[3] }}</text>
+        <text x="81" y="247">{{ price_labels[2] }}</text>
+        <text x="81" y="325">{{ price_labels[1] }}</text>
+        <text x="81" y="405">{{ price_labels[0] }}</text>
+    </g>
+
+    <g id="time_axis" fill="grey" font-family="Arial" font-size="12px">
+        <text x="130" y="468">01</text>
+        <text x="155" y="468">03</text>
+        <text x="182" y="468">05</text>
+        <text x="208" y="468">07</text>
+        <text x="234" y="468">09</text>
+        <text x="261" y="468">11</text>
+        <text x="282" y="468">13</text>
+        <text x="306" y="468">15</text>
+        <text x="330" y="468">17</text>
+        <text x="354" y="468">19</text>
+        <text x="379" y="468">21</text>
+        <text x="404" y="468">23</text>
+    </g>
+
+    {#    {% for i in range(24) %}#}
+    {#        <line x1="{{ i * 12.5 + 135 }}"#}
+    {#              x2="{{ i * 12.5 + 135 }}"#}
+    {#              y1="150"#}
+    {#              y2="450"#}
+    {#              stroke="hotpink"#}
+    {#              stroke-width="1"#}
+    {#              stroke-dasharray="5"#}
+    {#        />#}
+    {#    {% endfor %}#}
+
+    <g transform="translate(130,170)">
+        <polyline
+                points="{{ points }}"
+                fill="none"
+                {% if theme == "light" %}
+                stroke="black"
+                {% else %}
+                stroke="white"
+                {% endif %}
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+        />
+    </g>
+
+    <g id="currentTime">
+        <line x1="{{ currentX }}"
+              x2="{{ currentX }}"
+              y1="150"
+              y2="450"
+              stroke="rgb(1,169,244)"
+              stroke-width="2"
+              stroke-dasharray="5"
+        />
+    </g>
+
+</svg>
