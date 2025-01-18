@@ -46,16 +46,18 @@ def fetch_tibber_data(access_token):
 
     data = response.json()
     home = data["data"]["viewer"]["homes"][0]
-    prices = [{"x": price["startsAt"], "y": price["total"]} for price in home["currentSubscription"]["priceInfo"]["today"]]
+    prices_today = [{"x": price["startsAt"], "y": price["total"]} for price in home["currentSubscription"]["priceInfo"]["today"]]
+    prices_tomorrow = [{"x": price["startsAt"], "y": price["total"]} for price in home["currentSubscription"]["priceInfo"]["tomorrow"]]
 
     return {
-        "prices": prices,
+        "prices_today": prices_today,
+        "prices_tomorrow": prices_tomorrow,
         "currentPrice": home["currentSubscription"]["priceInfo"]["current"]["total"],
         "currentLevel": home["currentSubscription"]["priceInfo"]["current"]["level"].lower(),
     }
 
 
-def render_svg(data, price_level, current_price, width=300, height=300, scale=1, theme="light"):
+def render_svg(data, price_level, current_price, width=300, height=300, scale=1, theme="light", show_now=True):
     templateLoader = jinja2.FileSystemLoader(searchpath="./")
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template('template.svg.jinja2')
@@ -77,6 +79,7 @@ def render_svg(data, price_level, current_price, width=300, height=300, scale=1,
         price_labels=price_labels,
         currentX=current_x,
         price_level=price_level,
+        show_now=show_now,
     )
 
     return svg_content
@@ -95,11 +98,13 @@ if __name__ == "__main__":
 
     d = fetch_tibber_data(args.access_token or os.getenv("TIBBER_TOKEN"))
 
-    svg = render_svg(d['prices'], d['currentLevel'], d['currentPrice'], theme=args.theme)
-
+    svg = render_svg(d['prices_today'], d['currentLevel'], d['currentPrice'], theme=args.theme)
     clean_svg = etree.XML(svg, parser=etree.XMLParser(remove_blank_text=True))
-
-    # with open('output.svg', 'w') as f:
-    #     f.write(etree.tostring(clean_svg, pretty_print=True).decode())
-
     print(etree.tostring(clean_svg).decode())
+
+
+    svg = render_svg(d['prices_tomorrow'], d['currentLevel'], d['currentPrice'], theme=args.theme, show_now=False)
+    clean_svg = etree.XML(svg, parser=etree.XMLParser(remove_blank_text=True))
+    with open('tomorrow.svg', 'w') as f:
+        f.write(etree.tostring(clean_svg, pretty_print=True).decode())
+
