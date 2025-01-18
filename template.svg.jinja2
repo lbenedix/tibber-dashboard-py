@@ -28,20 +28,23 @@
                       fill="rgb(1,169,244)"/>
             {% endif %}
         </g>
-
-        <g id="price"
-           font-family="Arial"
-           font-size="40"
-                {% if theme == "light" %}
-           fill="black"
-                {% else %}
-           fill="white"
-                {% endif %}
-        >
-            <text x="150" y="110" font-weight="bold">{{ current_price }}</text>
-            <text x="200" y="110" font-weight="lighter" fill="grey">Cent</text>
-        </g>
     {% endif %}
+
+    <g id="price"
+       font-family="Arial"
+       font-size="40"
+            {% if theme == "light" %}
+       fill="black"
+            {% else %}
+       fill="white"
+            {% endif %}
+    >    {% if show_now %}
+        <text x="150" y="110" font-weight="bold">{{ current_price }}</text>
+        <text x="200" y="110" font-weight="lighter" fill="grey">Cent</text>
+    {% else %}
+        <text x="150" y="110" font-weight="bold">Morgen</text>
+    {% endif %}
+    </g>
 
     <g id="price_axis" fill="grey" font-family="Arial" font-size="12px">
         <text x="81" y="169">{{ price_labels[3] }}</text>
