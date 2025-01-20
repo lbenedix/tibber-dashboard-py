@@ -94,19 +94,21 @@
                     stroke-linejoin="round"
             />
         </g>
-        <g id="currentTime">
-            <line x1="{{ currentX }}"
-                  x2="{{ currentX }}"
-                  y1="150"
-                  y2="450"
-                  stroke="rgb(1,169,244)"
-                  stroke-width="2"
-                  stroke-dasharray="5"
-            />
-        </g>
+        {% if show_now %}
+            <g id="currentTime">
+                <line x1="{{ currentX }}"
+                      x2="{{ currentX }}"
+                      y1="150"
+                      y2="450"
+                      stroke="rgb(1,169,244)"
+                      stroke-width="2"
+                      stroke-dasharray="5"
+                />
+            </g>
+        {% endif %}
     {% else %}
-    <g transform="translate(175,330)">
-        <text font-size="150">🤷</text>
-    </g>
+        <g transform="translate(175,330)">
+            <text font-size="150">🤷</text>
+        </g>
     {% endif %}
 </svg>
