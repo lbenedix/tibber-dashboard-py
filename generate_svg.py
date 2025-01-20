@@ -84,6 +84,7 @@ def render_svg(data, price_level, current_price, width=300, height=300, scale=1,
         currentX=current_x,
         price_level=price_level,
         show_now=show_now,
+        data_available=len(points) > 0,
     )
 
     return svg_content
