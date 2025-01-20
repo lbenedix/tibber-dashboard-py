@@ -38,7 +38,7 @@
             {% else %}
        fill="white"
             {% endif %}
-    >    {% if show_now %}
+    >{% if show_now %}
         <text x="150" y="110" font-weight="bold">{{ current_price }}</text>
         <text x="200" y="110" font-weight="lighter" fill="grey">Cent</text>
     {% else %}
@@ -79,22 +79,21 @@
     {#        />#}
     {#    {% endfor %}#}
 
-    <g transform="translate(120,160)">
-        <polyline
-                points="{{ points }}"
-                fill="none"
-                {% if theme == "light" %}
-                stroke="black"
-                {% else %}
-                stroke="white"
-                {% endif %}
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-        />
-    </g>
-
-    {% if show_now %}
+    {% if data | length %}
+        <g transform="translate(120,160)">
+            <polyline
+                    points="{{ points }}"
+                    fill="none"
+                    {% if theme == "light" %}
+                    stroke="black"
+                    {% else %}
+                    stroke="white"
+                    {% endif %}
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            />
+        </g>
         <g id="currentTime">
             <line x1="{{ currentX }}"
                   x2="{{ currentX }}"
@@ -105,5 +104,9 @@
                   stroke-dasharray="5"
             />
         </g>
+    {% else %}
+    <g transform="translate(175,330)">
+        <text font-size="150">🤷</text>
+    </g>
     {% endif %}
 </svg>
