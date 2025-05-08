@@ -1,10 +1,11 @@
 import math
 import os
 import argparse
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 from lxml import etree
 import jinja2
 import requests
+import pytz
 
 
 def fetch_tibber_data(access_token):
@@ -57,7 +58,7 @@ def fetch_tibber_data(access_token):
     }
 
 
-def render_svg(data, price_level, current_price, width=300, height=300, scale=1, theme="light", show_now=True):
+def render_svg(data, price_level, current_price, timezone, width=300, height=300, scale=1, theme="light", show_now=True):
     templateLoader = jinja2.FileSystemLoader(searchpath="./")
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template('template.svg.jinja2')
@@ -73,8 +74,10 @@ def render_svg(data, price_level, current_price, width=300, height=300, scale=1,
         max_y = max(p['y'] * scale for p in data)
         points = " ".join(f"{(i * width) / (len(data) - 1)},{height - ((p['y'] * scale) / max_y) * height}" for i, p in enumerate(data))
 
-    now = datetime.now(tz=timezone(timedelta(hours=1)))  # Berlin is UTC+1
-    current_x = (now.hour - 1 + now.minute / 60) * 12.5 + 135
+
+    berlin_tz = pytz.timezone("Europe/Berlin")
+    now = datetime.now(tz=berlin_tz)
+    current_x = (now.hour + now.minute / 60) * 12.5 + 125
 
     svg_content = template.render(
         theme=theme,
@@ -99,15 +102,23 @@ if __name__ == "__main__":
     parser.add_argument("--access-token",
                         help="Tibber access token (fallback to TIBBER_TOKEN environment variable if not provided)")
 
+    parser.add_argument(
+        "--timezone",
+        default="Europe/Berlin",
+        help="Timezone for rendering the SVG (default: Europe/Berlin)",
+    )
+
     args = parser.parse_args()
 
     d = fetch_tibber_data(args.access_token or os.getenv("TIBBER_TOKEN"))
 
-    svg = render_svg(d['prices_today'],
-                     d['currentLevel'],
-                     d['currentPrice'],
-                     theme=args.theme,
-                     )
+    svg = render_svg(
+        d["prices_today"],
+        d["currentLevel"],
+        d["currentPrice"],
+        args.timezone,
+        theme=args.theme,
+    )
     clean_svg = etree.XML(svg, parser=etree.XMLParser(remove_blank_text=True))
     with open('today.svg', 'w') as f:
         f.write(etree.tostring(clean_svg, pretty_print=True).decode())
@@ -115,6 +126,7 @@ if __name__ == "__main__":
     svg = render_svg(d['prices_tomorrow'],
                      d['currentLevel'],
                      d['currentPrice'],
+                     args.timezone,
                      theme=args.theme,
                      show_now=False,
                      )
